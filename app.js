@@ -16,14 +16,15 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(partials());
 // uncomment after placing your favicon in /public
-// app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser('Quiz 2015'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(partials());
+app.use(methodOverride('_method'));
 app.use(session());
 
 app.use(methodOverride('_method'));
@@ -43,6 +44,20 @@ app.use(function(req, res, next) {
 
   // Hacer visible req.session en las vistas
   res.locals.session = req.session;
+  next();
+});
+
+// Mautologout
+app.use(function(req, res, next){
+  var tiempo = 2 * 60 * 1000; 
+  var now = new Date().getTime();
+
+  if(req.session && req.session.lastPetition) {
+    if (tiempo <= now - req.session.lastPetition){
+      delete req.session.user;
+    }
+  }
+  req.session.lastPetition = now;
   next();
 });
 
@@ -80,6 +95,8 @@ app.use(function(err, req, res, next) {
         errors: []
     });
 });
+
+
 
 
 module.exports = app;

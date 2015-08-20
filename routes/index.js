@@ -12,6 +12,15 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Quiz', errors: []});
 });
 
+
+/* GET créditos. */
+router.get('/author', function(req, res) {
+  res.render('author', { autor: 'Pedro Ibeas',
+  						 foto: '/images/foto.jpg',
+  						 errors: []
+			});
+});
+
 // Autoload de comandos con ids
 router.param('quizId', quizController.load);  // autoload :quizId
 router.param('commentId', commentController.load);  // autoload :commentId
@@ -35,9 +44,9 @@ router.get('/quizes',                      quizController.index);
 router.get('/quizes/:quizId(\\d+)',        quizController.show);
 router.get('/quizes/:quizId(\\d+)/answer', quizController.answer);
 router.get('/quizes/new', 				   sessionController.loginRequired, quizController.new);
-router.post('/quizes/create',              sessionController.loginRequired, multer({ dest: './public/media/'}), quizController.create);
+router.post('/quizes/create',              sessionController.loginRequired, quizController.create);
 router.get('/quizes/:quizId(\\d+)/edit',   sessionController.loginRequired, quizController.ownershipRequired, quizController.edit);
-router.put('/quizes/:quizId(\\d+)',        sessionController.loginRequired, quizController.ownershipRequired, multer({ dest: './public/media/'}), quizController.update);
+router.put('/quizes/:quizId(\\d+)',        sessionController.loginRequired, quizController.ownershipRequired, quizController.update);
 router.delete('/quizes/:quizId(\\d+)',     sessionController.loginRequired, quizController.ownershipRequired, quizController.destroy);
 
 // Definición de rutas de comentarios
